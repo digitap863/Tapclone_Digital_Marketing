@@ -4,6 +4,8 @@ import React, { useState } from "react";
 
 export default function Contact() {
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
@@ -11,14 +13,36 @@ export default function Contact() {
     message: "",
   });
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (contactForm.name && contactForm.email && contactForm.message) {
-      setFormSubmitted(true);
-      setTimeout(() => {
-        setFormSubmitted(false);
+    if (!contactForm.name || !contactForm.email || !contactForm.message) return;
+
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: contactForm.name,
+          email: contactForm.email,
+          service: contactForm.projectType,
+          message: contactForm.message,
+        }),
+      });
+
+      if (response.ok) {
+        setFormSubmitted(true);
         setContactForm({ name: "", email: "", projectType: "Performance Marketing", message: "" });
-      }, 5000);
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.error || "Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      setErrorMessage("A network error occurred. Please check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -118,14 +142,21 @@ export default function Contact() {
                 />
               </div>
 
+              {errorMessage && (
+                <div className="text-red-500 text-sm font-semibold bg-red-50/50 border border-red-200/50 p-3 rounded-xl">
+                  {errorMessage}
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-xl transition-all duration-200 cursor-pointer"
+                disabled={isSubmitting}
+                className="w-full inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-xl transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ background: "#6EE31A", color: "#000000", boxShadow: "0 4px 20px rgba(110,227,26,0.25)" }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = "#5ecc16")}
                 onMouseLeave={(e) => (e.currentTarget.style.background = "#6EE31A")}
               >
-                Send Message
+                {isSubmitting ? "Sending..." : "Send Message"}
               </button>
             </form>
           )}

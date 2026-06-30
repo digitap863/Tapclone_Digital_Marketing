@@ -63,7 +63,7 @@ export default function Testimonials() {
   };
 
   return (
-    <section id="testimonials" className="py-24 px-6 sm:px-8 lg:px-12 bg-zinc-50/50 border-t border-zinc-100">
+    <section id="testimonials" className="py-24 px-6 sm:px-8 lg:px-12 bg-zinc-50/50 border-t border-zinc-100 flex flex-col items-center justify-center">
       <style dangerouslySetInnerHTML={{__html: `
         .scrollbar-none::-webkit-scrollbar {
           display: none;
@@ -92,9 +92,7 @@ export default function Testimonials() {
                 About TapClone.
               </span>
             </h2>
-            <p className="text-zinc-500 text-sm sm:text-base leading-relaxed">
-              We partner with businesses across India and the UAE to drive growth and build sustainable digital advantages.
-            </p>
+            
           </div>
 
           {/* Navigation Arrows */}
@@ -193,6 +191,17 @@ export default function Testimonials() {
           ))}
         </div>
       </div>
+      <div className="pt-12">
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent("open-enquiry", { detail: { service: "General Inquiry" } }))}
+                className="inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-sm tracking-wide transition-all cursor-pointer"
+                style={{ background: "#6EE31A", color: "#000000", boxShadow: "0 4px 20px rgba(110,227,26,0.25)" }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "#5ecc16")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "#6EE31A")}
+              >
+                Enquire Now ➔
+              </button>
+            </div>
     </section>
   );
 }

@@ -4,7 +4,7 @@ import React from "react";
 
 export default function About() {
   return (
-    <section id="about" className="py-24 px-6 sm:px-8 lg:px-12 bg-white border-t border-zinc-100">
+    <section id="about" className="py-24 px-6 sm:px-8 lg:px-12 bg-white border-t border-zinc-100 justify-center items-center flex flex-col ">
       <div className="max-w-7xl mx-auto space-y-16">
         {/* Top: Text Content in 2 Columns */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
@@ -41,27 +41,19 @@ export default function About() {
         </div>
 
         {/* Bottom: 4 Stats Cards in a Single Row following the site's white theme design pattern */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { val: "500+", title: "CLIENTS" },
-            { val: "98%", title: "CLIENT SATISFACTION" },
-            { val: "7+", title: "YEARS IN KERALA" },
-            { val: "2x", title: "AVG. TRAFFIC GROWTH" },
-          ].map((stat, idx) => (
-            <div
-              key={idx}
-              className="bg-zinc-50/60 p-6 rounded-2xl border border-zinc-200/50 flex flex-col justify-center items-center h-40 shadow-sm transition-all duration-300 hover:bg-white hover:-translate-y-1.5 hover:shadow-[0_12px_30px_rgba(0,0,0,0.04)] hover:border-[#6EE31A]/40"
-            >
-              <div className="text-4xl font-extrabold text-[#4ab012] mb-2 tracking-tight">
-                {stat.val}
-              </div>
-              <h4 className="text-[10px] sm:text-xs font-bold text-zinc-700 uppercase tracking-widest text-center leading-relaxed">
-                {stat.title}
-              </h4>
-            </div>
-          ))}
-        </div>
+       
       </div>
+        <div className="pt-12">
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("open-enquiry", { detail: { service: "General Inquiry" } }))}
+            className="inline-flex items-center justify-center px-6 py-3 rounded-full font-bold text-sm tracking-wide transition-all cursor-pointer"
+            style={{ background: "#6EE31A", color: "#000000", boxShadow: "0 4px 20px rgba(110,227,26,0.25)" }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#5ecc16")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "#6EE31A")}
+          >
+            Enquire Now ➔
+          </button>
+        </div>
     </section>
   );
 }

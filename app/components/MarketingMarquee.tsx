@@ -2,12 +2,12 @@
 
 import React, { useState } from "react";
 
-// Accent colors cycle: white → lime green → white → purple → repeat
+// Accent colors cycle: white → lime green → white → brand green → repeat
 const accentColors = [
   "text-white",
   "text-[#6EE31A]",   // lime green
   "text-white",
-  "text-[#8B5CF6]",   // purple-violet
+  "text-[#4ab012]",   // brand green
   "text-white",
 ];
 
@@ -15,7 +15,7 @@ const iconColors = [
   "text-white",
   "text-[#6EE31A]",
   "text-white",
-  "text-[#8B5CF6]",
+  "text-[#4ab012]",
   "text-white",
 ];
 
