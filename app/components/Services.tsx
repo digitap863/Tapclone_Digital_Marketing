@@ -88,9 +88,9 @@ export default function Services() {
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 leading-tight">
-              Data-Driven Marketing <br />
+             Our 
               <span className="text-[#4ab012]">
-                Tailored for Scalability.
+                Services.
               </span>
             </h2>
           </div>
