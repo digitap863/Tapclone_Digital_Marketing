@@ -9,32 +9,60 @@ import { imgArr1, imgArr2 } from "../assets/posters";
 export default function Projects() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Combine both arrays to get all poster images
   const allImages = [...imgArr1, ...imgArr2];
 
-  // Group images into pairs for the two-column slide layout
-  const slides: { left: typeof allImages[0]; right: typeof allImages[0] }[] = [];
-  for (let i = 0; i < allImages.length; i += 2) {
-    if (allImages[i]) {
-      slides.push({
-        left: allImages[i],
-        right: allImages[i + 1] || allImages[0], // Fallback if odd number of images
-      });
+  // Detect responsive screen size
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint is 768px
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Group images dynamically based on viewport
+  const slides: (typeof allImages[0])[][] = [];
+  if (isMobile) {
+    // Mobile: 1 image per slide
+    allImages.forEach((img) => {
+      slides.push([img]);
+    });
+  } else {
+    // Desktop: 2 images per slide
+    for (let i = 0; i < allImages.length; i += 2) {
+      if (allImages[i]) {
+        slides.push([
+          allImages[i],
+          allImages[i + 1] || allImages[0], // Fallback if odd
+        ]);
+      }
     }
   }
 
+  // Safety guard for slide out-of-bounds on screen resize
+  useEffect(() => {
+    if (currentSlide >= slides.length && slides.length > 0) {
+      setCurrentSlide(slides.length - 1);
+    }
+  }, [isMobile, slides.length, currentSlide]);
+
   const nextSlide = () => {
+    if (slides.length === 0) return;
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
   const prevSlide = () => {
+    if (slides.length === 0) return;
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
   useEffect(() => {
-    if (!isPaused) {
+    if (!isPaused && slides.length > 0) {
       timeoutRef.current = setTimeout(() => {
         nextSlide();
       }, 4000);
@@ -44,7 +72,7 @@ export default function Projects() {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [currentSlide, isPaused]);
+  }, [currentSlide, isPaused, slides.length]);
 
   return (
     <section id="projects" className="py-24 px-6 sm:px-8 lg:px-12 bg-white border-t border-zinc-100 overflow-hidden">
@@ -74,7 +102,7 @@ export default function Projects() {
           onMouseLeave={() => setIsPaused(false)}
           className="relative w-full max-w-5xl mx-auto"
         >
-          {/* Main Slide Track Wrapper - Clean transparent/white styling with faders */}
+          {/* Main Slide Track Wrapper */}
           <div className="overflow-hidden p-2 relative">
             <div
               className="flex transition-transform duration-700 ease-in-out"
@@ -83,31 +111,27 @@ export default function Projects() {
               {slides.map((slide, idx) => (
                 <div
                   key={idx}
-                  className="flex-none w-full grid grid-cols-1 md:grid-cols-2 gap-6"
+                  className={`flex-none w-full grid gap-6 ${
+                    isMobile ? "grid-cols-1" : "grid-cols-2"
+                  }`}
                 >
-                  {/* Left Big Picture */}
-                  <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-white group">
-                    <Image
-                      src={slide.left.image1}
-                      alt={slide.left.text || "Project Poster"}
-                      fill
-                      sizes="(max-w-768px) 100vw, 550px"
-                      className="object-contain transition-transform duration-500 group-hover:scale-105"
-                      priority={idx === 0}
-                    />
-                  </div>
-
-                  {/* Right Big Picture */}
-                  <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-white group">
-                    <Image
-                      src={slide.right.image1}
-                      alt={slide.right.text || "Project Poster"}
-                      fill
-                      sizes="(max-w-768px) 100vw, 550px"
-                      className="object-contain transition-transform duration-500 group-hover:scale-105"
-                      priority={idx === 0}
-                    />
-                  </div>
+                  {slide.map((item, itemIdx) => (
+                    <div
+                      key={itemIdx}
+                      className="relative aspect-square w-full rounded-3xl overflow-hidden bg-white group"
+                    >
+                      {item.image1 && (
+                        <Image
+                          src={item.image1}
+                          alt={item.text || "Project Poster"}
+                          fill
+                          sizes="(max-w-768px) 100vw, 550px"
+                          className="object-contain transition-transform duration-500 group-hover:scale-105"
+                          priority={idx === 0}
+                        />
+                      )}
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
@@ -137,18 +161,25 @@ export default function Projects() {
           </button>
         </div>
 
-        {/* Indicators / Progress Dots */}
-        <div className="flex justify-center items-center gap-2 pt-2">
-          {slides.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                currentSlide === idx ? "w-8 bg-[#4ab012]" : "w-2 bg-zinc-200 hover:bg-zinc-300"
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
+        {/* Indicators / Progress Dots (Limited to first 12 indices for clean UI on mobile) */}
+        <div className="flex justify-center items-center gap-2 pt-2 flex-wrap max-w-lg mx-auto">
+          {slides.map((_, idx) => {
+            // Keep dots representation compact on mobile (only show 15 dots or range)
+            if (isMobile && idx > 15) return null;
+            return (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                  currentSlide === idx ? "w-8 bg-[#4ab012]" : "w-2 bg-zinc-200 hover:bg-zinc-300"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            );
+          })}
+          {isMobile && slides.length > 16 && (
+            <span className="text-[10px] text-zinc-400 font-bold ml-1">+{slides.length - 16} more</span>
+          )}
         </div>
 
       </div>
