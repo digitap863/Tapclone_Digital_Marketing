@@ -151,7 +151,7 @@ export default function Navbar() {
             className="w-full text-center px-5 py-3 text-base font-bold rounded-xl transition-all cursor-pointer"
             style={{ background: "#6EE31A", color: "#000000" }}
           >
-            Get Started
+           Contact Us
           </a>
         </div>
       </div>
