@@ -22,19 +22,39 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
 
-  useEffect(() => {
-    const observerOptions = { root: null, rootMargin: "-20% 0px -60% 0px", threshold: 0.15 };
-    const observerCallback = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => { if (entry.isIntersecting) setActiveSection(entry.target.id); });
+      // Check if we've scrolled to the bottom of the page
+      const isBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100;
+      if (isBottom) {
+        setActiveSection(navItems[navItems.length - 1].href.replace("#", ""));
+        return;
+      }
+
+      // Find the active section based on the scroll position
+      let currentSection = "home";
+      const threshold = 160; // Offset in pixels from top of viewport
+
+      for (const item of navItems) {
+        const id = item.href.replace("#", "");
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= threshold && rect.bottom > threshold) {
+            currentSection = id;
+            break;
+          }
+        }
+      }
+      setActiveSection(currentSection);
     };
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-    navItems.forEach((item) => { const el = document.querySelector(item.href); if (el) observer.observe(el); });
-    return () => { navItems.forEach((item) => { const el = document.querySelector(item.href); if (el) observer.unobserve(el); }); };
+
+    window.addEventListener("scroll", handleScroll);
+    // Call handleScroll once on mount to set correct state
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {

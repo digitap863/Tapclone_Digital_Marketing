@@ -90,7 +90,7 @@ export default function Services() {
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 leading-tight">
              Our 
               <span className="text-[#4ab012]">
-                Services.
+                 Services.
               </span>
             </h2>
           </div>
