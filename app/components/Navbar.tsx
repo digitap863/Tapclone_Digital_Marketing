@@ -11,7 +11,8 @@ const navItems: NavItem[] = [
   { label: "Home", href: "#home" },
   { label: "Services", href: "#services" },
   { label: "Why Us", href: "#why-choose-us" },
-  { label: "About", href: "#about" },
+  { label: "Testimonials", href: "#testimonials" },
+  { label: "Portfolio", href: "#projects" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -81,7 +82,7 @@ export default function Navbar() {
                       ? "bg-white shadow-sm scale-[1.02] font-bold"
                       : "text-zinc-500 hover:text-zinc-900 hover:bg-white/60"
                   }`}
-                  style={isActive ? { color: "#6EE31A" } : {}}
+                  style={isActive ? { color: "#4ab012" } : {}}
                 >
                   {item.label}
                 </a>
@@ -137,7 +138,7 @@ export default function Navbar() {
                 className={`px-4 py-3 rounded-xl text-base font-semibold transition-all ${
                   isActive ? "bg-zinc-50 font-bold" : "text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900"
                 }`}
-                style={isActive ? { color: "#6EE31A" } : {}}
+                style={isActive ? { color: "#4ab012" } : {}}
               >
                 {item.label}
               </a>
