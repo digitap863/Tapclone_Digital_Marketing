@@ -9,13 +9,14 @@ export default function Contact() {
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
+    phone: "",
     projectType: "Performance Marketing",
     message: "",
   });
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contactForm.name || !contactForm.email || !contactForm.message) return;
+    if (!contactForm.name || !contactForm.email || !contactForm.phone || !contactForm.message) return;
 
     setIsSubmitting(true);
     setErrorMessage("");
@@ -27,6 +28,7 @@ export default function Contact() {
         body: JSON.stringify({
           name: contactForm.name,
           email: contactForm.email,
+          phone: contactForm.phone,
           service: contactForm.projectType,
           message: contactForm.message,
         }),
@@ -34,7 +36,7 @@ export default function Contact() {
 
       if (response.ok) {
         setFormSubmitted(true);
-        setContactForm({ name: "", email: "", projectType: "Performance Marketing", message: "" });
+        setContactForm({ name: "", email: "", phone: "", projectType: "Performance Marketing", message: "" });
       } else {
         const data = await response.json();
         setErrorMessage(data.error || "Failed to send message. Please try again.");
@@ -112,22 +114,35 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="project-type" className="text-xs font-bold uppercase tracking-wider text-zinc-600">Service Needed</label>
-                <select
-                  id="project-type"
-                  value={contactForm.projectType}
-                  onChange={(e) => setContactForm({ ...contactForm, projectType: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-white text-zinc-900 focus:outline-none transition-colors cursor-pointer text-sm"
-                  onFocus={(e) => (e.target.style.borderColor = "#6EE31A")}
-                  onBlur={(e) => (e.target.style.borderColor = "")}
-                >
-                  <option>Performance Marketing</option>
-                  <option>Search Engine Optimization</option>
-                  <option>Social Media Marketing</option>
-                  <option>Content Marketing</option>
-                  <option>Email Marketing</option>
-                </select>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="phone" className="text-xs font-bold uppercase tracking-wider text-zinc-600">Phone Number</label>
+                  <input
+                    type="tel" id="phone" required placeholder="+91 98765 43210"
+                    value={contactForm.phone}
+                    onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 focus:outline-none transition-colors text-sm"
+                    onFocus={(e) => (e.target.style.borderColor = "#6EE31A")}
+                    onBlur={(e) => (e.target.style.borderColor = "")}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="project-type" className="text-xs font-bold uppercase tracking-wider text-zinc-600">Service Needed</label>
+                  <select
+                    id="project-type"
+                    value={contactForm.projectType}
+                    onChange={(e) => setContactForm({ ...contactForm, projectType: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-white text-zinc-900 focus:outline-none transition-colors cursor-pointer text-sm"
+                    onFocus={(e) => (e.target.style.borderColor = "#6EE31A")}
+                    onBlur={(e) => (e.target.style.borderColor = "")}
+                  >
+                    <option>Performance Marketing</option>
+                    <option>Search Engine Optimization</option>
+                    <option>Social Media Marketing</option>
+                    <option>Content Marketing</option>
+                    <option>Email Marketing</option>
+                  </select>
+                </div>
               </div>
 
               <div className="space-y-2">
