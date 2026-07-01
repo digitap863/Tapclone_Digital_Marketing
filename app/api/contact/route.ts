@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, phone, service, projectType, message } = body;
+    const { name, email, phone, service, projectType, message, company } = body;
 
     const selectedService = service || projectType || "General Inquiry";
     const contactPhone = phone || "Not Provided";
@@ -49,6 +49,12 @@ export async function POST(request: Request) {
             <td style="padding: 10px 8px; font-weight: bold; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #555;">Phone:</td>
             <td style="padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111;">${contactPhone}</td>
           </tr>
+          ${company ? `
+          <tr>
+            <td style="padding: 10px 8px; font-weight: bold; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #555;">Company:</td>
+            <td style="padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #111;">${company}</td>
+          </tr>
+          ` : ""}
           <tr>
             <td style="padding: 10px 8px; font-weight: bold; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #555;">Service Requested:</td>
             <td style="padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 14px; color: #4ab012; font-weight: bold;">${selectedService}</td>
@@ -73,7 +79,7 @@ export async function POST(request: Request) {
       from: `"TapClone Web Lead" <${process.env.SMTP_USER}>`,
       to: recipient,
       subject: `New Lead: ${selectedService} - ${name}`,
-      text: `New lead from ${name} (${email}, ${contactPhone}) for ${selectedService}: ${message}`,
+      text: `New lead from ${name} (${email}, ${contactPhone}${company ? `, Company: ${company}` : ""}) for ${selectedService}: ${message}`,
       html: emailHtml,
     });
 

@@ -5,16 +5,47 @@ import Image from "next/image";
 
 export default function Hero() {
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [callbackForm, setCallbackForm] = useState({ name: "", phone: "", email: "", company: "" });
 
-  const handleCallbackSubmit = (e: React.FormEvent) => {
+  const handleCallbackSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (callbackForm.name && callbackForm.phone && callbackForm.email && callbackForm.company) {
-      setFormSubmitted(true);
-      setTimeout(() => {
-        setFormSubmitted(false);
+    if (!callbackForm.name || !callbackForm.phone || !callbackForm.email || !callbackForm.company) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: callbackForm.name,
+          email: callbackForm.email,
+          phone: callbackForm.phone,
+          company: callbackForm.company,
+          service: "Callback Request",
+          message: `Requesting a callback from company: ${callbackForm.company}`,
+        }),
+      });
+
+      if (response.ok) {
+        setFormSubmitted(true);
         setCallbackForm({ name: "", phone: "", email: "", company: "" });
-      }, 5000);
+        setTimeout(() => {
+          setFormSubmitted(false);
+        }, 5000);
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.error || "Failed to submit request. Please try again.");
+      }
+    } catch (err) {
+      setErrorMessage("A network error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -105,24 +136,35 @@ export default function Hero() {
                       key={key}
                       type={type}
                       required
+                      disabled={isSubmitting}
                       placeholder={placeholder}
                       value={callbackForm[key as keyof typeof callbackForm]}
                       onChange={(e) => setCallbackForm({ ...callbackForm, [key]: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 text-sm transition-colors focus:outline-none"
+                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-white text-zinc-900 placeholder:text-zinc-400 text-sm transition-colors focus:outline-none disabled:opacity-60"
                       onFocus={(e) => (e.target.style.borderColor = "#6EE31A")}
                       onBlur={(e) => (e.target.style.borderColor = "")}
                     />
                   ))}
                 </div>
+                {errorMessage && (
+                  <div className="text-red-500 text-xs font-semibold bg-red-50/50 border border-red-200/50 p-3 rounded-xl">
+                    {errorMessage}
+                  </div>
+                )}
                 <div className="pt-1">
                   <button
                     type="submit"
-                    className="inline-flex items-center justify-center px-8 py-3 rounded-full font-extrabold text-xs sm:text-sm tracking-widest uppercase transition-all duration-200 cursor-pointer"
+                    disabled={isSubmitting}
+                    className="inline-flex items-center justify-center px-8 py-3 rounded-full font-extrabold text-xs sm:text-sm tracking-widest uppercase transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     style={{ background: "#6EE31A", color: "#000000", boxShadow: "0 4px 20px rgba(110,227,26,0.3)" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "#5ecc16")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "#6EE31A")}
+                    onMouseEnter={(e) => {
+                      if (!isSubmitting) e.currentTarget.style.background = "#5ecc16";
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isSubmitting) e.currentTarget.style.background = "#6EE31A";
+                    }}
                   >
-                    Get a Callback
+                    {isSubmitting ? "Sending..." : "Get a Callback"}
                   </button>
                 </div>
               </form>
