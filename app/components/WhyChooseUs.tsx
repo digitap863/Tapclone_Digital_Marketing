@@ -42,7 +42,7 @@ export default function WhyChooseUs() {
     const contactEl = document.getElementById("contact");
     if (contactEl) {
       contactEl.scrollIntoView({ behavior: "smooth" });
-      window.history.pushState(null, "", "#contact");
+      window.history.pushState(null, "", "/digitalmarketing/#contact");
     }
   };
 

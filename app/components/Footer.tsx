@@ -5,7 +5,8 @@ import React from "react";
 export default function Footer() {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    const targetElement = document.getElementById(href.replace("#", ""));
+    const targetId = href.split("#")[1] || href;
+    const targetElement = document.getElementById(targetId);
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: "smooth" });
       window.history.pushState(null, "", href);
@@ -18,7 +19,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="md:col-span-2 space-y-4">
-            <a href="#home" onClick={(e) => handleNavClick(e, "#home")} className="flex items-center gap-2.5 cursor-pointer">
+            <a href="/digitalmarketing/#home" onClick={(e) => handleNavClick(e, "/digitalmarketing/#home")} className="flex items-center gap-2.5 cursor-pointer">
               <img src="/Tapclone logo black.png" alt="Tapclone Logo" className="h-8 w-auto object-contain" />
             </a>
             <p className="text-sm text-zinc-500 max-w-sm leading-relaxed">
@@ -31,12 +32,12 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-4">Navigation</h3>
             <ul className="space-y-2">
               {[
-                { label: "Home", href: "#home" },
-  { label: "Services", href: "#services" },
-  { label: "Why Us", href: "#why-choose-us" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Portfolio", href: "#projects" },
-  { label: "Contact", href: "#contact" },
+                { label: "Home", href: "/digitalmarketing/#home" },
+                { label: "Services", href: "/digitalmarketing/#services" },
+                { label: "Why Us", href: "/digitalmarketing/#why-choose-us" },
+                { label: "Testimonials", href: "/digitalmarketing/#testimonials" },
+                { label: "Portfolio", href: "/digitalmarketing/#projects" },
+                { label: "Contact", href: "/digitalmarketing/#contact" },
               ].map((link) => (
                 <li key={link.href}>
                   <a

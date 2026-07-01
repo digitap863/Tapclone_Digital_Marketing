@@ -8,18 +8,20 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: "Home", href: "#home" },
-  { label: "Services", href: "#services" },
-  { label: "Why Us", href: "#why-choose-us" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Portfolio", href: "#projects" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/digitalmarketing/#home" },
+  { label: "Services", href: "/digitalmarketing/#services" },
+  { label: "Why Us", href: "/digitalmarketing/#why-choose-us" },
+  { label: "Testimonials", href: "/digitalmarketing/#testimonials" },
+  { label: "Portfolio", href: "/digitalmarketing/#projects" },
+  { label: "Contact", href: "/digitalmarketing/#contact" },
 ];
 
 export default function Navbar() {
   const [activeSection, setActiveSection] = useState("home");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const getSectionId = (href: string) => href.split("#")[1] || href;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,7 +30,7 @@ export default function Navbar() {
       // Check if we've scrolled to the bottom of the page
       const isBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100;
       if (isBottom) {
-        setActiveSection(navItems[navItems.length - 1].href.replace("#", ""));
+        setActiveSection(getSectionId(navItems[navItems.length - 1].href));
         return;
       }
 
@@ -37,7 +39,7 @@ export default function Navbar() {
       const threshold = 160; // Offset in pixels from top of viewport
 
       for (const item of navItems) {
-        const id = item.href.replace("#", "");
+        const id = getSectionId(item.href);
         const el = document.getElementById(id);
         if (el) {
           const rect = el.getBoundingClientRect();
@@ -59,7 +61,7 @@ export default function Navbar() {
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    const targetId = href.replace("#", "");
+    const targetId = getSectionId(href);
     const targetElement = document.getElementById(targetId);
     if (targetElement) {
       targetElement.scrollIntoView({ behavior: "smooth" });
@@ -80,7 +82,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <a href="#home" onClick={(e) => handleNavClick(e, "#home")} className="flex items-center gap-2.5 group cursor-pointer">
+          <a href="/digitalmarketing/#home" onClick={(e) => handleNavClick(e, "/digitalmarketing/#home")} className="flex items-center gap-2.5 group cursor-pointer">
             <img
               src="/Tapclone logo black.png"
               alt="Tapclone Logo"
@@ -91,7 +93,7 @@ export default function Navbar() {
           {/* Desktop Nav Pill */}
           <div className="hidden md:flex items-center gap-1 bg-zinc-100/70 p-1.5 rounded-full border border-zinc-200/50">
             {navItems.map((item) => {
-              const isActive = activeSection === item.href.replace("#", "");
+              const isActive = activeSection === getSectionId(item.href);
               return (
                 <a
                   key={item.href}
@@ -113,8 +115,8 @@ export default function Navbar() {
           {/* CTA Button */}
           <div className="hidden md:flex items-center">
             <a
-              href="#contact"
-              onClick={(e) => handleNavClick(e, "#contact")}
+              href="/digitalmarketing/#contact"
+              onClick={(e) => handleNavClick(e, "/digitalmarketing/#contact")}
               className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold rounded-full shadow-md hover:scale-[1.02] transition-all duration-200 cursor-pointer"
               style={{ background: "#6EE31A", color: "#000000", boxShadow: "0 4px 16px rgba(110,227,26,0.25)" }}
               onMouseEnter={(e) => (e.currentTarget.style.background = "#5ecc16")}
@@ -149,7 +151,7 @@ export default function Navbar() {
       >
         <div className="px-6 py-5 flex flex-col gap-2">
           {navItems.map((item) => {
-            const isActive = activeSection === item.href.replace("#", "");
+            const isActive = activeSection === getSectionId(item.href);
             return (
               <a
                 key={item.href}
@@ -166,8 +168,8 @@ export default function Navbar() {
           })}
           <hr className="border-zinc-200/60 my-2" />
           <a
-            href="#contact"
-            onClick={(e) => handleNavClick(e, "#contact")}
+            href="/digitalmarketing/#contact"
+            onClick={(e) => handleNavClick(e, "/digitalmarketing/#contact")}
             className="w-full text-center px-5 py-3 text-base font-bold rounded-xl transition-all cursor-pointer"
             style={{ background: "#6EE31A", color: "#000000" }}
           >
